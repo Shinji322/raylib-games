@@ -1,9 +1,13 @@
 #include <cstdlib> // for rng 
+#include <iostream>
 #include <raylib.h> // for graphical rendering
 
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h" // for physics
 #include "helpers.h" // for various helper functions
+
+#define CONSOLE_LOGGING // logs info to console
+// #define CONSOLE_LOGGING_UPDATE // logs info on every update call
 
 #define MAX_PLATFORMS 5
 const Vector2 VELOCITY = (Vector2) { 5.0f, 5.0f };
@@ -32,6 +36,10 @@ class Map
 
         void GeneratePlatforms(int screenWidth, int screenHeight)
         {
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Generating platforms" << std::endl;     
+            #endif // CONSOLE_LOGGING
+
             for (Platform platform : platforms)
             {
                 float x = std::rand() % (screenWidth - PLATFORM_OFFSET);
@@ -54,6 +62,10 @@ class Map
 
         void GenerateGround(int screenWidth, int screenHeight)
         {
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Generating ground" << std::endl;     
+            #endif // CONSOLE_LOGGING
+
             Vector2 position = (Vector2) {
                 (float)screenWidth - PLATFORM_OFFSET,
                 (float)screenHeight - PLATFORM_OFFSET 
@@ -72,13 +84,19 @@ class Map
     public:
         void Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
         {
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Intializing map" << std::endl;     
+            #endif // CONSOLE_LOGGING
+
             GeneratePlatforms(SCREEN_WIDTH, SCREEN_HEIGHT);
             GenerateGround(SCREEN_WIDTH, SCREEN_HEIGHT);
         }
 
         Map()
         {
-
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Creating map" << std::endl;     
+            #endif // CONSOLE_LOGGING
         }
 
         Platform getGround() { return ground; }
@@ -92,6 +110,10 @@ class Player
     public:
         void Init(Vector2 groundPosition)
         {
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Initializing player" << std::endl;     
+            #endif // CONSOLE_LOGGING
+
             Vector2 position = (Vector2) {
                 groundPosition.x / 2.0f,
                 groundPosition.y + 10,
@@ -109,6 +131,10 @@ class Player
 
         void Jump()
         {
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Jumping" << std::endl;     
+            #endif // CONSOLE_LOGGING
+
             if (body->isGrounded == false) return;
             body->velocity.y += ACCELERATION.y;
             body->isGrounded = false;
@@ -116,6 +142,10 @@ class Player
 
         void Move(Input input)
         {
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Moving" << std::endl;     
+            #endif // CONSOLE_LOGGING
+
             if (input.left)
                 body->velocity.x -= ACCELERATION.x;
             if (input.right)
@@ -136,7 +166,9 @@ class Player
 
         Player()
         {
-
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Creating player" << std::endl;     
+            #endif // CONSOLE_LOGGING
         }
 };
 
@@ -160,6 +192,10 @@ class Game
     public:
         void Init()
         {
+            #ifdef CONSOLE_LOGGING
+                std::cout << "Initializing game" << std::endl;     
+            #endif // CONSOLE_LOGGING
+
             SetConfigFlags(CONFIG_FLAGS);
             InitWindow(
                 SCREEN_WIDTH,
@@ -186,6 +222,10 @@ class Game
 
         Input checkUserInput() 
         {
+            #ifdef CONSOLE_LOGGING_UPDATE
+                std::cout << "Checking user input" << std::endl;     
+            #endif // CONSOLE_LOGGING_UPDATE
+
             // Keyboard
             Input input;
 
@@ -201,6 +241,10 @@ class Game
 
         void Draw()
         {
+            #ifdef CONSOLE_LOGGING_UPDATE
+                std::cout << "Drawing" << std::endl;     
+            #endif // CONSOLE_LOGGING_UPDATE
+
             int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
@@ -219,6 +263,10 @@ class Game
 
         void Update()
         {
+            #ifdef CONSOLE_LOGGING_UPDATE
+                std::cout << "Updating" << std::endl;     
+            #endif // CONSOLE_LOGGING_UPDATE
+
             // TODO Implement the game loop
             UpdatePhysics();
             player.Move(checkUserInput());
@@ -232,19 +280,20 @@ class Game
 
         void Loop()
         {
+            std::cout << "Game Loop started" << std::endl;
             // Every 60 seconds or whatever
             while (!WindowShouldClose()) 
             {
                 Update();
                 Draw();
-                if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_Q))
-                    Close();
+                // if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_Q))
+                //     Close();
             }
         }
 
         Game()
         {
-
+            std::cout << "Game object created" << std::endl;
         }
 
         int getScreenWidth() { return SCREEN_WIDTH; }
@@ -257,6 +306,8 @@ int main (int argc, char *argv[])
 {
     Game game;
 
+    // std::cout << "Started" << std::endl;
+    game.Init();
     game.Loop();
 
     return 0;
