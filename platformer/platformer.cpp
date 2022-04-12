@@ -10,8 +10,9 @@
 // #define CONSOLE_LOGGING_UPDATE // logs info on every update call
 
 #define MAX_PLATFORMS 5
-const Vector2 VELOCITY = (Vector2) { 5.0f, 5.0f };
-const Vector2 ACCELERATION = (Vector2) { 2.0f, 4.0f };
+#define PHYSICS_ENABLED false
+const Vector2 VELOCITY = (Vector2) { 1.0f, 1.0f };
+const Vector2 ACCELERATION = (Vector2) { 1.0f, 1.0f };
 
 //---------------------------------------------------------//
 // Class declarations                                      //
@@ -31,7 +32,6 @@ class Map
 {
     private:
         Platform platforms[MAX_PLATFORMS];
-        Platform ground;
         const int PLATFORM_OFFSET = 20;
 
         void GeneratePlatforms(int screenWidth, int screenHeight)
@@ -57,10 +57,11 @@ class Map
                 );
                 platform->isGrounded = false;
                 platform->useGravity = false;
+                platform->enabled = PHYSICS_ENABLED;
             }
         }
 
-        void GenerateGround(int screenWidth, int screenHeight)
+        Platform GenerateGround(int screenWidth, int screenHeight)
         {
             #ifdef CONSOLE_LOGGING
                 std::cout << "Generating ground" << std::endl;     
@@ -68,10 +69,10 @@ class Map
 
             Vector2 position = (Vector2) {
                 (float)screenWidth - PLATFORM_OFFSET,
-                (float)screenHeight - PLATFORM_OFFSET 
+                (float)PLATFORM_OFFSET 
             };
 
-            ground = CreatePhysicsBodyRectangle(
+            Platform ground = CreatePhysicsBodyRectangle(
                     position,
                     screenWidth - PLATFORM_OFFSET, 10, 
                     1
@@ -79,9 +80,14 @@ class Map
 
             ground->isGrounded = true;
             ground->useGravity = false;
+            ground->enabled = PHYSICS_ENABLED;
+
+            return ground;
         }
 
     public:
+        Platform ground;
+
         void Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
         {
             #ifdef CONSOLE_LOGGING
@@ -89,7 +95,7 @@ class Map
             #endif // CONSOLE_LOGGING
 
             GeneratePlatforms(SCREEN_WIDTH, SCREEN_HEIGHT);
-            GenerateGround(SCREEN_WIDTH, SCREEN_HEIGHT);
+            ground = GenerateGround(SCREEN_WIDTH, SCREEN_HEIGHT);
         }
 
         Map()
@@ -98,8 +104,6 @@ class Map
                 std::cout << "Creating map" << std::endl;     
             #endif // CONSOLE_LOGGING
         }
-
-        Platform getGround() { return ground; }
 };
 
 class Player
@@ -114,6 +118,7 @@ class Player
                 std::cout << "Initializing player" << std::endl;     
             #endif // CONSOLE_LOGGING
 
+            // TODO investigate why the program is sticking here
             Vector2 position = (Vector2) {
                 groundPosition.x / 2.0f,
                 groundPosition.y + 10,
@@ -127,6 +132,7 @@ class Player
 
             body->isGrounded = true;
             body->useGravity = true;
+            body->freezeOrient = true;
         }
 
         void Jump()
@@ -142,7 +148,7 @@ class Player
 
         void Move(Input input)
         {
-            #ifdef CONSOLE_LOGGING
+            #ifdef CONSOLE_LOGGING_UPDATE
                 std::cout << "Moving" << std::endl;     
             #endif // CONSOLE_LOGGING
 
@@ -214,8 +220,8 @@ class Game
             );
             player.Init(
                 (Vector2) {
-                    gameMap.getGround()->position.x,
-                    gameMap.getGround()->position.y,
+                    gameMap.ground->position.x,
+                    gameMap.ground->position.y,
                 }
             );
         }
@@ -227,13 +233,21 @@ class Game
             #endif // CONSOLE_LOGGING_UPDATE
 
             // Keyboard
-            Input input;
+            Input input = (Input) { false, false, false, false, false };
 
             input.left = IsKeyPressed(KEY_LEFT);
             input.right = IsKeyPressed(KEY_RIGHT);
             input.up = IsKeyPressed(KEY_UP);
             input.down = IsKeyPressed(KEY_DOWN);
             input.jump = IsKeyPressed(KEY_SPACE);
+
+            #ifdef CONSOLE_LOGGING
+                std::cout << "input.left = " << input.left << std::endl;
+                std::cout << "input.right = " << input.right << std::endl;
+                std::cout << "input.up = " << input.up << std::endl;
+                std::cout << "input.down = " << input.down << std::endl;
+                std::cout << "input.jump = " << input.jump << std::endl;
+            #endif // CONSOLE_LOGGING
 
             return input;
         }
@@ -244,21 +258,24 @@ class Game
             #ifdef CONSOLE_LOGGING_UPDATE
                 std::cout << "Drawing" << std::endl;     
             #endif // CONSOLE_LOGGING_UPDATE
+            BeginDrawing();
+                ClearBackground(BLACK);
 
-            int bodiesCount = GetPhysicsBodiesCount();
-            for (int i = 0; i < bodiesCount; i++)
-            {
-                PhysicsBody body = GetPhysicsBody(i);
-                int vertices = GetPhysicsShapeVerticesCount(i);
-                for(int j = 0; j < vertices; j++)
+                int bodiesCount = GetPhysicsBodiesCount();
+                for (int i = 0; i < bodiesCount; i++)
                 {
-                    Vector2 vertexA = GetPhysicsShapeVertex(body, j);
-                    int jj = clamp(j + 1, 0, vertices); // Get Next Vertex
-                    Vector2 vertexB = GetPhysicsShapeVertex(body, jj);
+                    PhysicsBody body = GetPhysicsBody(i);
+                    int vertices = GetPhysicsShapeVerticesCount(i);
+                    for(int j = 0; j < vertices; j++)
+                    {
+                        Vector2 vertexA = GetPhysicsShapeVertex(body, j);
+                        int k = (((j + 1) < vertices) ? (j + 1) : 0);
+                        Vector2 vertexB = GetPhysicsShapeVertex(body, k);
 
-                    DrawLineV(vertexA, vertexB, GREEN);
+                        DrawLineV(vertexA, vertexB, GREEN);
+                    }
                 }
-            }
+            EndDrawing();
         }
 
         void Update()
@@ -267,33 +284,21 @@ class Game
                 std::cout << "Updating" << std::endl;     
             #endif // CONSOLE_LOGGING_UPDATE
 
-            // TODO Implement the game loop
             UpdatePhysics();
             player.Move(checkUserInput());
         }
 
         void Close()
         {
+            EndDrawing();
             ClosePhysics();
             CloseWindow();
-        }
-
-        void Loop()
-        {
-            std::cout << "Game Loop started" << std::endl;
-            // Every 60 seconds or whatever
-            while (!WindowShouldClose()) 
-            {
-                Update();
-                Draw();
-                // if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_Q))
-                //     Close();
-            }
         }
 
         Game()
         {
             std::cout << "Game object created" << std::endl;
+            Init();
         }
 
         int getScreenWidth() { return SCREEN_WIDTH; }
@@ -307,8 +312,13 @@ int main (int argc, char *argv[])
     Game game;
 
     // std::cout << "Started" << std::endl;
-    game.Init();
-    game.Loop();
+    while (!WindowShouldClose())
+    {
+        game.Update();
+        game.Draw();
+        if (IsKeyPressed(KEY_ESCAPE) || (IsKeyPressed(KEY_Q) && IsKeyPressed(KEY_LEFT_CONTROL)))
+            game.Close();
+    }
 
     return 0;
 }
