@@ -1,3 +1,5 @@
 *.ttf
 build/*
 */build/*
+obj/*
+*/obj/*

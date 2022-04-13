@@ -1,5 +1,5 @@
 CXX    := g++
-OBJDIR := build
+OBJDIR := obj
 IDIRS  := -I/usr/include/raylib_extras/ -I$(PWD)
 IFLAGS := -lraylib
 SRCS   := $(wildcard *.cpp)
@@ -9,11 +9,12 @@ TARGET := platformer
 
 .PHONY: clean echo
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) 
 	@echo [LD] $@
-	@$(CXX) $(IDIRS) $(IFLAGS) -o $(OBJDIR)/$@ $^
+	@mkdir -pv build
+	@$(CXX) $(IDIRS) $(IFLAGS) -o build/$@ $^
 
-$(OBJDIR)/%.o: %.cpp | $(OBJDIR)
+$(OBJDIR)/%.o: %.cpp | $(OBJDIR) 
 	@echo [CXX]  $@
 	@$(CXX) -c $(IDIRS) $(IFLAGS) -o $@ $<
 
