@@ -9,19 +9,16 @@ TARGET := platformer
 
 .PHONY: clean echo
 
-
-# $(TARGET): $(SRCS) mkdir
-# 	$(CXX) -c $(IDIRS) $(IFLAGS) -c $< -o $(OBJDIR)/$@
-
+$(TARGET): $(OBJS)
+	@echo [LD] $@
+	@$(CXX) $(IDIRS) $(IFLAGS) -o $(OBJDIR)/$@ $^
 
 $(OBJDIR)/%.o: %.cpp | $(OBJDIR)
 	@echo [CXX]  $@
-	$(CXX) -c $(IDIRS) $(IFLAGS) -o $@ $<
-
+	@$(CXX) -c $(IDIRS) $(IFLAGS) -o $@ $<
 
 $(OBJDIR):
 	@mkdir -pv $(OBJDIR)
-
 
 echo:
 	@echo "CXX = $(CXX)"
