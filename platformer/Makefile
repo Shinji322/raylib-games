@@ -10,12 +10,12 @@ TARGET := platformer
 .PHONY: clean echo
 
 $(TARGET): $(OBJS) 
-	@echo [LD] $@
+	@echo "[LD] $@"
 	@mkdir -pv build
 	@$(CXX) $(IDIRS) $(IFLAGS) -o build/$@ $^
 
 $(OBJDIR)/%.o: %.cpp | $(OBJDIR) 
-	@echo [CXX]  $@
+	@echo "[CXX]  $@"
 	@$(CXX) -c $(IDIRS) $(IFLAGS) -o $@ $<
 
 $(OBJDIR):
@@ -31,6 +31,5 @@ echo:
 
 
 clean:
-	@rm -f build/*.o
-	@rm -f build/$(TARGET)
-	@rmdir build
+	@rm -rf obj
+	@rm -rf build
