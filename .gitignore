@@ -1,5 +1,6 @@
 *.ttf
+*.o
 build/*
-*/build/*
+**/build/*
 obj/*
-*/obj/*
+**/obj/*
