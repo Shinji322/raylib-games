@@ -2,8 +2,8 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "config.h"
 #include <cstdlib>
+#include "config.h"
 #include "physac.h"
 #include "platform.h"
 #include "helpers.h"
@@ -25,10 +25,11 @@ class Map
 
         void GeneratePlatforms(Vector2 screenDimensions)
         {
-            for (int i = 0; i < MAX_PLATFORMS; i++)
+            // We split the entire map into sections where each platform will only be in one section
+            for (int sectionWidth = (screenDimensions.x/MAX_PLATFORMS), i = 0; i < MAX_PLATFORMS; i++)
             {
-                int minX = (screenDimensions.x) / (MAX_PLATFORMS - i);
-                int maxX = (screenDimensions.x) / (MAX_PLATFORMS - i + 1);
+                int minX = sectionWidth * i;
+                int maxX = sectionWidth * (i + 1);
                 int minY = 0.15f*screenDimensions.y;
                 int maxY = 0.85f*screenDimensions.y;
 
