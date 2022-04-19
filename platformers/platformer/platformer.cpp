@@ -54,8 +54,8 @@ class Map
             for (int i = 0; i < MAX_PLATFORMS; i++)
             {
                 // By using a min and a max, we can generate specifc locations for platforms so they don't overwrite each other
-                int minX = (screenWidth) / (MAX_PLATFORMS - i);
-                int maxX = (screenWidth) / (MAX_PLATFORMS - i + 1);
+                int minX = (screenWidth/MAX_PLATFORMS) * i;
+                int maxX = (screenWidth/MAX_PLATFORMS) * (i + 1);
                 int minY = 0.25f*(screenHeight);
                 int maxY = 0.75f*(screenHeight);
 
