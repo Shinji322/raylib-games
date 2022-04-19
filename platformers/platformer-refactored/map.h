@@ -2,9 +2,9 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "config.h"
 #include <cstdlib>
 #include "physac.h"
-#include "config.h"
 #include "platform.h"
 #include "helpers.h"
 
@@ -19,7 +19,7 @@ class Map
         {
             Vector2 position = (Vector2) {
                 screenDimensions.x / 2,
-                screenDimensions.y - 10 // Distance from max screen height
+                screenDimensions.y - 10 // Distance from below the screen
             };
         }
 
