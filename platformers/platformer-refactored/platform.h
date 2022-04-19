@@ -1,6 +1,6 @@
 #pragma once
-#ifndef platform
-#define platform
+#ifndef PLATFORM_H
+#define PLATFORM_H
 
 #include "physac.h"
 
