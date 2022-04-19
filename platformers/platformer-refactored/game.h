@@ -4,8 +4,8 @@
 
 #include <raylib.h>
 #include "config.h"
-#include "player.h"
 #include "map.h"
+#include "player.h"
 
 
 class Game 
