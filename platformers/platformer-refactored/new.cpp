@@ -1,5 +1,6 @@
 #include <cstdlib> // for rng 
 #include <raylib.h> // for graphical rendering
+#include "game.h"
 #include "physac.h" // for physics
 #include "helpers.h" // for various helper functions
 

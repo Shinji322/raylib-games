@@ -1,13 +1,7 @@
-#ifndef raylib
 #include <raylib.h>
-#endif // !raylib
-#ifndef physac
 #include "physac.h"
-#endif // !physac
+#include "config.h"
 #include "game.h"
-
-int Game::getScreenWidth() { return SCREEN_WIDTH; }
-int Game::getScreenHeight() { return SCREEN_HEIGHT; }
 
 void Game::Init()
 {

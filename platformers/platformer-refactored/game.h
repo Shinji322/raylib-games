@@ -1,9 +1,11 @@
 #pragma once
-#ifndef game
+#ifndef GAME_H
+#define GAME_H
 
-#ifndef raylib
 #include <raylib.h>
-#endif // !raylib
+#include "config.h"
+#include "player.h"
+#include "map.h"
 
 
 class Game 
@@ -11,14 +13,22 @@ class Game
     private:
         const int SCREEN_WIDTH = 800;
         const int SCREEN_HEIGHT = 450;
-        const Vector2 GRAVITY = { 0.0f, 9.81f };
         const char *title = "Shinji's Epic Platformer Test"; 
-        Camera2D camera = (Camera2D) { (Vector2) {} };
+        Camera2D camera = (Camera2D) {
+            (Vector2) { 0.0f, 0.0f },
+            (Vector2) { 0.0f, 0.0f },
+            0.0f,
+            1.0f
+        };
+        Map map;
+        Player player;
+
 
     public:
         void Init();
-        int getScreenWidth();
-        int getScreenHeight();
+        void Update();
+        void Draw();
+        void Close();
 };
 
 #endif // ! game

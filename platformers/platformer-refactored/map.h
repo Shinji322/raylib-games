@@ -1,65 +1,86 @@
 #pragma once
-#define MAX_PLATFORMS 5
-#ifndef map
+#ifndef MAP_H
+#define MAP_H
 
-#ifndef raylib
-#include <raylib.h>
-#endif // !raylib
-#ifndef physac
-#include "physac.h"
-#endif // !physac
-#ifndef cstdlib
 #include <cstdlib>
-#endif // ! cstdlib
-#ifndef helpers
+#include "physac.h"
+#include "config.h"
+#include "platform.h"
 #include "helpers.h"
-#endif // !helpers
-#ifndef game
-#include "game.h"
-#endif // !game
 
-typedef PhysicsBody Platform;
-
-class Map
+class Map 
 {
     private:
-        Platform platforms[MAX_PLATFORMS];
         Platform ground;
-        const int PLATFORM_OFFSET = 20;
+        Platform walls[2];
+        Platform platforms[MAX_PLATFORMS];
 
-        void GeneratePlatforms(int screenWidth, int screenHeight)
+        void GenerateGround(Vector2 screenDimensions)
         {
-            for (Platform platform : platforms)
-            {
-                float x = rand() % (screenWidth - PLATFORM_OFFSET);
-                float y = rand() % (screenHeight - PLATFORM_OFFSET);
-                x = clamp(x, 0.25f*screenWidth, 0.75f*screenWidth);
-                y = clamp(y, 0.25f*screenHeight, 0.75f*screenHeight);
+            Vector2 position = (Vector2) {
+                screenDimensions.x / 2,
+                screenDimensions.y - 10 // Distance from max screen height
+            };
+        }
 
-                platform->position = (Vector2) {x, y};
-                platform->isGrounded = false;
-                platform->useGravity = false;
+        void GeneratePlatforms(Vector2 screenDimensions)
+        {
+            for (int i = 0; i < MAX_PLATFORMS; i++)
+            {
+                int minX = (screenDimensions.x) / (MAX_PLATFORMS - i);
+                int maxX = (screenDimensions.x) / (MAX_PLATFORMS - i + 1);
+                int minY = 0.15f*screenDimensions.y;
+                int maxY = 0.85f*screenDimensions.y;
+
+
+                Vector2 position = (Vector2) {
+                        clamp_f(std::rand() % maxX, minX, maxX),
+                        clamp_f(std::rand() % maxY, minY, maxY)
+                    };
+                    
+                // In the original implementation, we needed to initialize each platform related boolean to false
+                // Since the class does it for us, we don't have to!
+                platforms[i].body = CreatePhysicsBodyRectangle(
+                            position,
+                            PLATFORM_WIDTH, PLATFORM_HEIGHT,
+                            PLATFORM_DENSITY
+                        );
             }
         }
 
-        void GenerateGround(int screenWidth, int screenHeight)
+        void GenerateWalls(Vector2 screenDimensions)
         {
-            ground->position = (Vector2) { 
-                (float)screenWidth - PLATFORM_OFFSET,
-                (float)screenHeight - PLATFORM_OFFSET 
-            };
+            walls[0].body = CreatePhysicsBodyRectangle(
+                (Vector2) { 0, screenDimensions.y - 10 },
+                50, screenDimensions.y,
+                WALL_DENSITY
+            );
+            walls[0].body->isGrounded = false;
+            walls[0].body->useGravity = false;
+            walls[0].body->enabled = false;
 
-            ground->isGrounded = true;
-            ground->useGravity = false;
+            walls[1].body = CreatePhysicsBodyRectangle(
+                    (Vector2) { screenDimensions.x - 10, screenDimensions.x - 10 },
+                    50, screenDimensions.y,
+                    WALL_DENSITY
+            );
+            walls[1].body->isGrounded = false;
+            walls[1].body->useGravity = false;
+            walls[1].body->enabled = false;
         }
 
     public:
-        Map(Game* game)
+        void Init(Vector2 screenDimensions)
         {
-            this->GeneratePlatforms(game->getScreenWidth(), game->getScreenHeight());
-            this->GenerateGround(game->getScreenWidth(), game->getScreenHeight());
+            GeneratePlatforms(screenDimensions);
+            GenerateGround(screenDimensions);
+            GenerateWalls(screenDimensions);
         }
+        void Update(); // TODO implemented by game
+        void Draw(); // TODO implemented in game
+        void Close();
+        Map(){}
 };
 
-#endif // !map
 
+#endif // !map

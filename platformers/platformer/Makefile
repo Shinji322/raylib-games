@@ -11,7 +11,7 @@ TARGET := platformer
 
 $(TARGET): $(OBJS) 
 	@echo "[LD] $@"
-	@mkdir -pv build
+	@mkdir -p build
 	@$(CXX) $(IDIRS) $(IFLAGS) -o build/$@ $^
 
 $(OBJDIR)/%.o: %.cpp | $(OBJDIR) 
@@ -19,7 +19,7 @@ $(OBJDIR)/%.o: %.cpp | $(OBJDIR)
 	@$(CXX) -c $(IDIRS) $(IFLAGS) -o $@ $<
 
 $(OBJDIR):
-	@mkdir -pv $(OBJDIR)
+	@mkdir -p $(OBJDIR)
 
 echo:
 	@echo "CXX = $(CXX)"
