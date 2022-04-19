@@ -13,9 +13,4 @@ void Game::Init()
 
     SetPhysicsGravity(GRAVITY.x, GRAVITY.y);
 
-    camera.offset = (Vector2) {0.0f, 0.0f};
-    camera.target = (Vector2) {0.0f, 0.0f};
-    camera.rotation = 0.0f;
-    camera.zoom = 1.0f;
 }
-
