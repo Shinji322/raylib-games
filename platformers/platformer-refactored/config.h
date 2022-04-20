@@ -7,7 +7,9 @@
 const Vector2 PLAYER_ACCELERATION = (Vector2) { 1.10f, 2.0f };
 const Vector2 MAX_VELOCITY = (Vector2) { 1.15f, 4.0f };
 const Vector2 GRAVITY = (Vector2) { 0.0f, 9.81f };
-const Texture2D PLAYER_SPRITE = LoadTexture("assets/mario.png");
+const char PLAYER_SPRITE[] = "assets/mario.png";
+const char PLATFORM_SPRITE[] = "assets/platform.jpg";
+const char GROUND_SPRITE[] = "assets/platform.jpg";
 const int CONFIG_FLAGS = FLAG_MSAA_4X_HINT;
 #define MAX_PLATFORMS 5
 #define PLATFORM_WIDTH 50
