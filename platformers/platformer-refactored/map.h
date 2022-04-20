@@ -14,6 +14,8 @@ class Map
         Platform ground;
         Platform walls[2];
         Platform platforms[MAX_PLATFORMS];
+        Texture2D platformSprite;
+        Texture2D groundSprite;
 
         void GenerateGround(Vector2 screenDimensions)
         {
@@ -76,10 +78,17 @@ class Map
             GeneratePlatforms(screenDimensions);
             GenerateGround(screenDimensions);
             GenerateWalls(screenDimensions);
+
+            platformSprite = LoadTexture(PLATFORM_SPRITE);
+            groundSprite = LoadTexture(GROUND_SPRITE);
         }
-        void Update(); // TODO implemented by game
-        void Draw(); // TODO implemented in game
-        void Close();
+        void Update(); 
+        void Draw(); 
+        void Close() 
+        {
+            UnloadTexture(platformSprite);
+            UnloadTexture(groundSprite);
+        }
         Map(){}
 };
 
