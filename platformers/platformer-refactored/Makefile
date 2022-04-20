@@ -2,17 +2,18 @@ CXX    := g++
 OBJDIR := obj
 IDIRS  := -I/usr/include/raylib_extras/ -I$(PWD)
 IFLAGS := -lraylib
+CFLAGS := -g
 SRCS   := $(wildcard *.cpp)
 OBJS   := $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
 TARGET := platformer
 
-.PHONY: clean echo
+.PHONY: clean echo debug
 
 $(TARGET): $(OBJS) 
 	@echo "[LD] $@"
 	@mkdir -pv build
-	@$(CXX) $(IDIRS) $(IFLAGS) -o build/$@ $^
+	@$(CXX) $(CFLAGS) $(IDIRS) $(IFLAGS) -o build/$@ $^
 
 $(OBJDIR)/%.o: %.cpp | $(OBJDIR) 
 	@echo "[CXX]  $@"
@@ -31,6 +32,9 @@ echo:
 
 
 clean:
-	@rm -f build/*.o
-	@rm -f build/$(TARGET)
-	@rmdir build
+	@rm -rf build/
+	@rm -rf obj/
+
+
+debug: $(TARGET)
+	@curl http://127.0.0.1:5550/api/runtime/run
