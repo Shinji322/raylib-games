@@ -1,37 +1,17 @@
 #include "player.h"
-
 #include <raylib.h>
 #include "physac.h"
 
-void Player::Init(Vector2 start_location)
-{
-    body = CreatePhysicsBodyRectangle(
-            start_location,
-            50, 50,
-            1.0f
-        );
-    
-    body->isGrounded = true;
-    body->useGravity = true;
-    // body->freezeOrient = true;
-    body->dynamicFriction = 5;
-}
-
-
-void Player::Draw(Vector2 position)
+void Player::Draw()
 {
     // MAYBE_TODO Implement animations using a spritesheet?
-    DrawTexture(sprite, position.x, position.y, LIME);
+    // NOTE This might not work due to sprite position and texture positioning being different
+    // i.e. texture might draw from middle whereas body position is at the top
+    DrawTextureV(sprite, body->position, LIME);
 }
 
 
-void Player::Update()
+void Player::Update(Input input)
 {
-    
-}
-
-
-void Player::Close()
-{
-    UnloadTexture(sprite);
+    Move(input);    
 }
