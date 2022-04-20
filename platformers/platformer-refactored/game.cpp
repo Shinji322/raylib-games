@@ -1,8 +1,6 @@
 #include <raylib.h>
-#include "physac.h"
 #include "config.h"
 #include "game.h"
-#define PHYSAC_IMPLEMENTATION
 
 void Game::Init()
 {
