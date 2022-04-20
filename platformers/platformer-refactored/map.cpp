@@ -11,12 +11,16 @@ void Map::Draw()
     }
 
     // Draw Walls
-    for (Platform wall : walls)
+    for (PhysicsBody wall : walls)
     {
-        DrawTextureV(platformSprite, wall.body->position, LIME);
+        DrawTextureV(platformSprite, wall->position, LIME);
     }
 
     // Draw Ground
     DrawTextureV(groundSprite, ground.body->position, LIME);
 }
 
+void Map::Update()
+{
+
+}

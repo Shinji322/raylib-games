@@ -4,7 +4,6 @@
 
 #include <cstdlib>
 #include "config.h"
-#include "physac.h"
 #include "platform.h"
 #include "helpers.h"
 
@@ -12,7 +11,7 @@ class Map
 {
     private:
         Platform ground;
-        Platform walls[2];
+        PhysicsBody walls[2];
         Platform platforms[MAX_PLATFORMS];
         Texture2D platformSprite;
         Texture2D groundSprite;
@@ -43,33 +42,29 @@ class Map
                     
                 // In the original implementation, we needed to initialize each platform related boolean to false
                 // Since the class does it for us, we don't have to!
-                platforms[i].body = CreatePhysicsBodyRectangle(
-                            position,
-                            PLATFORM_WIDTH, PLATFORM_HEIGHT,
-                            PLATFORM_DENSITY
-                        );
+                platforms[i].body->position = position;
             }
         }
 
         void GenerateWalls(Vector2 screenDimensions)
         {
-            walls[0].body = CreatePhysicsBodyRectangle(
+            walls[0] = CreatePhysicsBodyRectangle(
                 (Vector2) { 0, screenDimensions.y - 10 },
                 50, screenDimensions.y,
                 WALL_DENSITY
             );
-            walls[0].body->isGrounded = false;
-            walls[0].body->useGravity = false;
-            walls[0].body->enabled = false;
+            walls[0]->isGrounded = false;
+            walls[0]->useGravity = false;
+            walls[0]->enabled = false;
 
-            walls[1].body = CreatePhysicsBodyRectangle(
+            walls[1] = CreatePhysicsBodyRectangle(
                     (Vector2) { screenDimensions.x - 10, screenDimensions.x - 10 },
                     50, screenDimensions.y,
                     WALL_DENSITY
             );
-            walls[1].body->isGrounded = false;
-            walls[1].body->useGravity = false;
-            walls[1].body->enabled = false;
+            walls[1]->isGrounded = false;
+            walls[1]->useGravity = false;
+            walls[1]->enabled = false;
         }
 
     public:
