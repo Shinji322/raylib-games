@@ -5,32 +5,12 @@
 #include <raylib.h>
 #include "physac.h"
 #include "input.h"
+#include "config.h"
 #include "helpers.h"
 
 
 class Player
 {
-public:
-    PhysicsBody body;
-
-    void Init(Vector2 start_location);
-    void Update();
-    void Draw(Vector2 position);
-    void Close();
-    void SetSprite(const char *filename)
-    {
-        sprite = LoadTexture(filename);
-    }
-    void SetAcceleration(Vector2 acceleration)
-    {
-        this->acceleration = acceleration;
-    }
-    void SetMaxVelocity(Vector2 maxVelocity)
-    {
-        this->maxVelocity = maxVelocity;
-    }
-    Player(){}
-
 private:
     // Set to fallback values in the event config.h doesn't specify
     Vector2 acceleration = (Vector2) { 1.10f, 2.0f };
@@ -58,6 +38,40 @@ private:
             //     body->velocity.y += acceleration.y;
         }
     }
+public:
+    PhysicsBody body;
+
+    void Init(Vector2 start_location)
+    {
+        body = CreatePhysicsBodyRectangle(
+                start_location,
+                50, 50,
+                1.0f
+        );
+        body->isGrounded = true;
+        body->useGravity = true;
+        /* body->freezeOrient = true; */ 
+        body->dynamicFriction = 5;
+    };
+    void Update(Input input);
+    void Draw();
+    void Close()
+    {
+        UnloadTexture(sprite);
+    }
+    void SetSprite(const char *filename)
+    {
+        this->sprite = LoadTexture(filename);
+    }
+    void SetAcceleration(Vector2 acceleration)
+    {
+        this->acceleration = acceleration;
+    }
+    void SetMaxVelocity(Vector2 maxVelocity)
+    {
+        this->maxVelocity = maxVelocity;
+    }
+    Player(){}
 };
 
-#endif // !player
+#endif // !PLAYER_H
