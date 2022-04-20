@@ -2,11 +2,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <raylib.h>
-#include "physac.h"
 #include "input.h"
 #include "config.h"
 #include "helpers.h"
+#ifndef PHYSAC_H
+#include "physac.h"
+#endif //!PHYSAC_H
 
 
 class Player

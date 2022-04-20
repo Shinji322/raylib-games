@@ -69,7 +69,7 @@
 *
 **********************************************************************************************/
 
-#if !defined(PHYSAC_H)
+#ifndef PHYSAC_H
 #define PHYSAC_H
 
 // Function specifiers in case library is build/used as a shared library (Windows)
