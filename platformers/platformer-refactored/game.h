@@ -11,8 +11,7 @@
 class Game 
 {
     private:
-        const int SCREEN_WIDTH = 800;
-        const int SCREEN_HEIGHT = 450;
+        const Vector2 SCREEN_DIMENSIONS = (Vector2) { 800, 450 };
         const char *title = "Shinji's Epic Platformer Test"; 
         Camera2D camera = (Camera2D) {
             (Vector2) { 0.0f, 0.0f },
@@ -22,6 +21,7 @@ class Game
         };
         Map map;
         Player player;
+        InputManager inputManager;
 
 
     public:
@@ -29,6 +29,7 @@ class Game
         void Update();
         void Draw();
         void Close();
+        void Loop();
 };
 
-#endif // ! game
+#endif // ! GAME_H
