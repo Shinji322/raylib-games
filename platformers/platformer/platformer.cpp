@@ -51,31 +51,28 @@ class Map
 
             // This is something you should think about?
                 // Why did I go through all this hassle instead of using a foreach loop
-            for (int i = 0; i < MAX_PLATFORMS; i++)
+            for (int sectionWidth = (screenWidth/MAX_PLATFORMS), i = 0; i < MAX_PLATFORMS; i++)
             {
-                // By using a min and a max, we can generate specifc locations for platforms so they don't overwrite each other
-                int minX = (screenWidth/MAX_PLATFORMS) * i;
-                int maxX = (screenWidth/MAX_PLATFORMS) * (i + 1);
-                int minY = 0.25f*(screenHeight);
-                int maxY = 0.75f*(screenHeight);
-
-                float xPos = clamp_f(std::rand() % maxX, minX, maxX);
-                float yPos = clamp_f(std::rand() % maxY, minY, maxY);
-
-                float width = PLATFORM_WIDTH;
-                float height = PLATFORM_HEIGHT;
+                int minX = sectionWidth * i;
+                int maxX = sectionWidth * (i + 1);
+                int minY = 0.15f*screenHeight;
+                int maxY = 0.85f*(screenHeight);
+                        
+                Vector2 position = (Vector2) {
+                        clamp_f(std::rand() % maxX, minX, maxX),
+                        clamp_f(std::rand() % maxY, minY, maxY)
+                    };
 
                 platforms[i] = CreatePhysicsBodyRectangle(
-                            (Vector2) { xPos, yPos },
-                            width, height,
+                            position,
+                            PLATFORM_WIDTH, PLATFORM_HEIGHT,
                             1
                 );
+
                 platforms[i]->isGrounded = false;
                 platforms[i]->useGravity = false;
                 platforms[i]->enabled = PHYSICS_ENABLED;
-
             }
-
             #ifdef TESTING_PLATFORMS
                 platforms[MAX_PLATFORMS] = CreatePhysicsBodyRectangle(
                     (Vector2) { 0, screenHeight - (float)PLATFORM_OFFSET},
