@@ -340,21 +340,27 @@ class Game
             EndDrawing();
         }
 
+        void Close()
+        {
+            EndDrawing();
+            ClosePhysics();
+        }
+
         void Update()
         {
             #ifdef CONSOLE_LOGGING_UPDATE
                 std::cout << "Updating" << std::endl;     
             #endif // CONSOLE_LOGGING_UPDATE
 
+            Input userInput = checkUserInput();
             UpdatePhysics();
-            player.Move(checkUserInput());
+            player.Move(userInput);
+            if (userInput.refresh)
+            {
+                Refresh();
+            }
         }
 
-        void Close()
-        {
-            EndDrawing();
-            ClosePhysics();
-        }
 
         Game()
         {
